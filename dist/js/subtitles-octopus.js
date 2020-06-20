@@ -84,7 +84,26 @@ var SubtitlesOctopus = function (options) {
         }
         // Worker
         if (!self.worker) {
-            self.worker = new Worker(self.workerUrl);
+             function XHRWorker(url, ready, scope) {
+                var oReq = new XMLHttpRequest();
+                oReq.addEventListener('load', function() {
+                    var worker = new Worker(window.URL.createObjectURL(new Blob([this.responseText])));
+                    if (ready) {
+                        ready.call(scope, worker);
+                    }
+                }, oReq);
+                oReq.open("get", url, true);
+                oReq.send();
+            }
+          function WorkerStart() {
+            XHRWorker(self.workerUrl, function(worker) {
+            self.worker=worker
+          }
+      }, this);
+  }
+
+  WorkerStart();
+            //self.worker = new Worker(self.workerUrl);
             self.worker.onmessage = self.onWorkerMessage;
             self.worker.onerror = self.workerError;
         }
