@@ -99,7 +99,7 @@ var SubtitlesOctopus = function (options) {
             XHRWorker(self.workerUrl, function(worker) {
             self.worker=worker
           }
-      }, this);
+      , this);
   }
 
   WorkerStart();
